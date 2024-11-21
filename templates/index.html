@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Database Connection</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0-alpha1/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .card {
+            margin-bottom: 30px;
+        }
+
+        .form-control {
+            border-radius: 0.5rem;
+        }
+
+        .btn {
+            border-radius: 0.5rem;
+        }
+
+        .container {
+            max-width: 800px;
+        }
+
+        .flash-message {
+            margin-top: 20px;
+        }
+
+        h1 {
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container mt-5">
+        <!-- Title -->
+        <h1 class="text-center mb-4">Web Quản Lý Sinh Viên</h1>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="alert alert-{{ messages[0][0] }} flash-message" role="alert">
+                    {{ messages[0][1] }}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <!-- Connect to Database Section -->
+        <div class="card shadow-sm p-4">
+            <h5 class="card-title text-center mb-4">Connect to Database</h5>
+            <form method="POST">
+                <div class="mb-3">
+                    <label for="db_name" class="form-label">Database Name</label>
+                    <input type="text" class="form-control" id="db_name" name="db_name" value="postgres" required>
+                </div>
+                <div class="mb-3">
+                    <label for="user" class="form-label">User</label>
+                    <input type="text" class="form-control" id="user" name="user" value="postgres" required>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password" name="password" value="02072003" required>
+                </div>
+                <div class="mb-3">
+                    <label for="host" class="form-label">Host</label>
+                    <input type="text" class="form-control" id="host" name="host" value="localhost" required>
+                </div>
+                <div class="mb-3">
+                    <label for="port" class="form-label">Port</label>
+                    <input type="text" class="form-control" id="port" name="port" value="5432" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Connect</button>
+            </form>
+        </div>
+
+        <!-- Load Data Section -->
+        <div class="card shadow-sm p-4">
+            <h5 class="card-title text-center mb-4">Load Data</h5>
+            <form method="POST" action="{{ url_for('load_data') }}">
+                <div class="mb-3">
+                    <label for="table_name" class="form-label">Table Name</label>
+                    <input type="text" class="form-control" id="table_name" name="table_name" value="danhsach" required>
+                </div>
+                <button type="submit" class="btn btn-success w-100">Load Data</button>
+            </form>
+        </div>
+
+        <!-- Insert Data Section -->
+        <div class="card shadow-sm p-4">
+            <h5 class="card-title text-center mb-4">Insert Data</h5>
+            <form method="POST" action="{{ url_for('insert_data') }}">
+                <input type="hidden" name="table_name" value="danhsach"> <!-- Thêm tên bảng -->
+                <div class="mb-3">
+                    <label for="column1" class="form-label">Ho Ten</label>
+                    <input type="text" class="form-control" id="column1" name="column1" required>
+                </div>
+                <div class="mb-3">
+                    <label for="column2" class="form-label">Dia Chi</label>
+                    <input type="text" class="form-control" id="column2" name="column2" required>
+                </div>
+                <div class="mb-3">
+                    <label for="column3" class="form-label">MSSV</label>
+                    <input type="text" class="form-control" id="column3" name="column3" required>
+                </div>
+                <button type="submit" class="btn btn-warning w-100">Insert Data</button>
+            </form>
+        </div>
+
+        <!-- Display Loaded Data -->
+        {% if rows %}
+        <div class="card shadow-sm p-4 mt-4">
+            <h5 class="card-title text-center mb-4">Loaded Data</h5>
+            <form method="POST" action="{{ url_for('delete_data') }}">
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>Select</th>
+                            <th>Ho Ten</th>
+                            <th>Dia Chi</th>
+                            <th>MSSV</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in rows %}
+                        <tr>
+                            <td><input type="checkbox" name="selected_rows" value="{{ row[0] }}"></td>
+                            <td>{{ row[0] }}</td> <!-- Ho Ten -->
+                            <td>{{ row[1] }}</td> <!-- Dia Chi -->
+                            <td>{{ row[2] }}</td> <!-- MSSV -->
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <button type="submit" class="btn btn-danger w-100">Delete Selected</button>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0-alpha1/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
